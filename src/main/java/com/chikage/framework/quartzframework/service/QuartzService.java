@@ -1,10 +1,14 @@
 package com.chikage.framework.quartzframework.service;
 
+import com.chikage.framework.quartzframework.Exception.DynamicQuartzException;
 import com.chikage.framework.quartzframework.model.QuartzJobDetails;
-import com.chikage.framework.quartzframework.quartz.cluster.job.DynamicQuartzJob;
+import com.chikage.framework.quartzframework.quartz.cluster.jobExecuter.DynamicQuartzJob;
+import com.chikage.framework.quartzframework.quartz.cluster.jobListener.SchedulerListener;
 import com.chikage.framework.quartzframework.repository.QuartzJobDetailsMapper;
+import com.chikage.framework.quartzframework.utils.SpringContextHolder;
 import org.apache.commons.lang3.StringUtils;
 import org.quartz.*;
+import org.quartz.impl.matchers.KeyMatcher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -22,11 +26,17 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class QuartzService {
-    /** jobName 前缀*/
+    /**
+     * jobName 前缀
+     */
     private static final String JOB_NAME_PREFIX = "jobName.";
-    /** triggerName 前缀*/
+    /**
+     * triggerName 前缀
+     */
     private static final String TRIGGER_NAME_PREFIX = "triggerName.";
-    /** jobName/triggerName 默认组 */
+    /**
+     * jobName/triggerName 默认组
+     */
     private static final String GROUP_DEFAULT = "DEFAULT";
 
     @Autowired
@@ -35,7 +45,7 @@ public class QuartzService {
     @Autowired
     private Scheduler scheduler;
 
-    public void createQrtzJobDetails(QuartzJobDetails quartzJobDetails) throws Exception{
+    public void createQrtzJobDetails(QuartzJobDetails quartzJobDetails) throws Exception {
 
         // 非空校验
         if (quartzJobDetails == null) {
@@ -45,28 +55,55 @@ public class QuartzService {
             throw new Exception("qrtzJobDetails serviceInfo 为空");
         }
 
-//        // 定时服务有效性校验 (校验是否存在对应的servcie.method )
-//        this.checkServiceAndMethod(quartzJobDetails.getJobName());
+        // 定时服务有效性校验 (校验是否存在对应的servcie.method )
+        this.checkServiceAndMethod(quartzJobDetails.getJobName());
 
         // 唯一性校验
         String jobName = JOB_NAME_PREFIX + quartzJobDetails.getJobName();
         String triggerName = TRIGGER_NAME_PREFIX + quartzJobDetails.getJobName();
-        String jobGroup = StringUtils.isBlank(quartzJobDetails.getJobGroup())? GROUP_DEFAULT : quartzJobDetails.getJobGroup();
+        String jobGroup = StringUtils.isBlank(quartzJobDetails.getJobGroup()) ? GROUP_DEFAULT : quartzJobDetails.getJobGroup();
         JobKey jobKey = JobKey.jobKey(jobName, jobGroup);
 //        if (scheduler.checkExists(jobKey)) {
 //            throw new DynamicQuartzException(quartzJobDetails.getJobName() + "服务方法对应定时任务已经存在!");
 //        }
 
         // 构建job信息
-        JobDetail job = JobBuilder.newJob(DynamicQuartzJob.class).withIdentity(jobKey).withDescription(quartzJobDetails.getDescription()).build();
+        JobDetail job = JobBuilder.newJob(DynamicQuartzJob.class)
+                .withIdentity(jobKey)
+                .withDescription(quartzJobDetails.getDescription())
+                .usingJobData("jobData",quartzJobDetails.getJobData())
+                .build();
         TriggerKey triggerKey = TriggerKey.triggerKey(triggerName, jobGroup);
 
         // 构建job的触发规则 cronExpression
-        Trigger trigger = TriggerBuilder.newTrigger().withIdentity(triggerKey).startNow()
-                .withSchedule(CronScheduleBuilder.cronSchedule(quartzJobDetails.getCronExpression())).build();
+        Trigger trigger = TriggerBuilder.newTrigger()
+                .withIdentity(triggerKey)
+                .startNow()
+                .withSchedule(CronScheduleBuilder.cronSchedule(quartzJobDetails.getCronExpression()))
+                .build();
 
         // 注册job和trigger信息
         scheduler.scheduleJob(job, trigger);
+        scheduler.getListenerManager().addJobListener(new SchedulerListener(), KeyMatcher.keyEquals(jobKey));
 
+    }
+
+    /**
+     * <li>校验服务和方法是否存在</li>
+     *
+     * @param jobName
+     * @throws DynamicQuartzException
+     */
+    private void checkServiceAndMethod(String jobName) throws DynamicQuartzException {
+        String[] serviceInfo = jobName.split("\\.");
+        String beanName = serviceInfo[0];
+        String methodName = serviceInfo[1];
+        if (!SpringContextHolder.existBean(beanName)) {
+            throw new DynamicQuartzException("找不到对应服务");
+        }
+//		if (! SpringContextHolder.existBeanAndMethod(beanName, methodName, null)) {
+        if (!SpringContextHolder.existBeanAndMethod(beanName, methodName, new Class[]{String.class})) {
+            throw new DynamicQuartzException("服务方法不存在");
+        }
     }
 }

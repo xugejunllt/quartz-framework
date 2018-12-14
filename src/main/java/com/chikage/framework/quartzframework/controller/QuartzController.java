@@ -3,12 +3,8 @@ package com.chikage.framework.quartzframework.controller;
 import com.chikage.framework.quartzframework.model.QuartzJobDetails;
 import com.chikage.framework.quartzframework.service.QuartzService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,14 +26,21 @@ public class QuartzController {
     @Autowired
     private QuartzService quartzService;
 
-    @RequestMapping("/add")
-    @ResponseBody
-    public Map<String, Object> addQrtzJobDetails(@RequestBody QuartzJobDetails quartzJobDetails, HttpServletRequest request) throws Exception {
+    @PostMapping(value = "/add")
+    public Map<String, Object> addQuartzJobDetails(@RequestBody QuartzJobDetails quartzJobDetails) throws Exception {
         Map<String, Object> map = new HashMap<>();
-
         quartzService.createQrtzJobDetails(quartzJobDetails);
         map.put("success", true);
         map.put("msg", "定时任务添加成功");
+        return map;
+    }
+
+    @PostMapping(value = "/delete")
+    public Map<String,Object> deleteQuartzJobDetails(@RequestBody QuartzJobDetails quartzJobDetails) throws Exception{
+        Map<String, Object> map = new HashMap<>();
+        quartzService.deleteQuartzJobDetails(quartzJobDetails);
+        map.put("success", true);
+        map.put("msg", "定时任务删除成功");
         return map;
     }
 }

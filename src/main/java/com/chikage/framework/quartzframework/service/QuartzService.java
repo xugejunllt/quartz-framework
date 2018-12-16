@@ -37,6 +37,8 @@ public class QuartzService {
     @Transactional
     public BaseResponse addJob(JobCaller jobCaller) {
         try {
+            String jobGroup = jobCaller.getJobGroup() != null ? jobCaller.getJobGroup() : "DEFAULT";
+            jobCaller.setJobGroup(jobGroup);
             jobCallerMapper.insert(jobCaller);
             QuartzJobDetails jobDetails = jobDetailManager.trans2QuartzJobDetail(jobCaller);
             return quartzManager.createQrtzJobDetails(jobDetails);

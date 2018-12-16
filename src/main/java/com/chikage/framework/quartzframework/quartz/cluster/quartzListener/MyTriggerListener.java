@@ -29,7 +29,7 @@ public class MyTriggerListener implements TriggerListener {
      */
     @Override
     public void triggerFired(Trigger trigger, JobExecutionContext context) {
-        System.out.println("Trigger监听器：MyTriggerListener.triggerFired()");
+        System.out.println("Trigger监听器-触发器触发：MyTriggerListener.triggerFired()");
     }
 
     /**
@@ -39,7 +39,7 @@ public class MyTriggerListener implements TriggerListener {
      */
     @Override
     public boolean vetoJobExecution(Trigger trigger, JobExecutionContext context) {
-        System.out.println("Trigger监听器：MyTriggerListener.vetoJobExecution()");
+        System.out.println("Trigger监听器-触发器触发,job即将运行：MyTriggerListener.vetoJobExecution()");
         return false;
     }
 
@@ -50,7 +50,7 @@ public class MyTriggerListener implements TriggerListener {
      */
     @Override
     public void triggerMisfired(Trigger trigger) {
-        System.out.println("Trigger监听器：MyTriggerListener.triggerMisfired()");
+        System.out.println("Trigger监听器-触发器发现MisFire,错过这一轮的触发：MyTriggerListener.triggerMisfired()");
     }
 
     /**
@@ -60,7 +60,7 @@ public class MyTriggerListener implements TriggerListener {
      */
     @Override
     public void triggerComplete(Trigger trigger, JobExecutionContext context, Trigger.CompletedExecutionInstruction triggerInstructionCode) {
-        System.out.println("Trigger监听器：MyTriggerListener.triggerComplete()");
+        System.out.println("Trigger监听器-触发器触发完成：MyTriggerListener.triggerComplete()");
 
     }
 }

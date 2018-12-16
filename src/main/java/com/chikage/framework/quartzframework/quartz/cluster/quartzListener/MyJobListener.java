@@ -29,15 +29,15 @@ public class MyJobListener implements JobListener {
     public void jobToBeExecuted(JobExecutionContext context) {
 
         String jobName = context.getJobDetail().getKey().toString();
-        System.out.println("jobToBeExecuted");
-        System.out.println("Job : " + jobName + " is going to start...");
+//        System.out.println("jobToBeExecuted");
+        System.out.println("Job调度前 : " + jobName + " is going to start...");
 
     }
 
     //任务调度被拒了
     @Override
     public void jobExecutionVetoed(JobExecutionContext context) {
-        System.out.println("jobExecutionVetoed");
+        System.out.println("Job调度被拒:jobExecutionVetoed");
         //可以做一些日志记录原因
 
     }
@@ -46,10 +46,10 @@ public class MyJobListener implements JobListener {
     @Override
     public void jobWasExecuted(JobExecutionContext context,
                                JobExecutionException jobException) {
-        System.out.println("jobWasExecuted");
+//        System.out.println("Job调度器:jobWasExecuted");
 
         String jobName = context.getJobDetail().getKey().toString();
-        System.out.println("Job : " + jobName + " is finished...");
+        System.out.println("Job调度后 : " + jobName + " is finished...");
 
         if (jobException!=null&&!jobException.getMessage().equals("")) {
             System.out.println("Exception thrown by: " + jobName

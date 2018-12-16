@@ -1,12 +1,14 @@
 package com.chikage.framework.quartzframework.quartz.cluster.jobExecuter;
 
+import com.chikage.framework.quartzframework.quartz.cluster.quartzListener.MyJobListener;
+import com.chikage.framework.quartzframework.quartz.cluster.quartzListener.MyTriggerListener;
 import org.quartz.*;
 import org.quartz.impl.JobDetailImpl;
+import org.quartz.impl.matchers.KeyMatcher;
 import org.springframework.context.ApplicationContext;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 import org.springframework.util.StringUtils;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 /**
@@ -25,31 +27,38 @@ import java.lang.reflect.Method;
 @PersistJobDataAfterExecution
 public class DynamicQuartzJob extends QuartzJobBean {
     @Override
-    protected void executeInternal(JobExecutionContext jobContext) throws JobExecutionException {
-        JobDetailImpl jobDetail = (JobDetailImpl) jobContext.getJobDetail();
-        String name = jobDetail.getName();
-        if (StringUtils.isEmpty(name)) {
-            throw new JobExecutionException("can not find service info, because desription is empty");
-        }
-        String[] serviceInfo = StringUtils.delimitedListToStringArray(name, ".");
-        // serviceInfo[0] is JOB_NAME_PREFIX
-        String beanName = serviceInfo[1];
-        String methodName = serviceInfo[2];
-        Object serviceImpl = getApplicationContext(jobContext).getBean(beanName);
-        Method method;
+    protected void executeInternal(JobExecutionContext jobContext) {
         try {
+
+            JobDetailImpl jobDetail = (JobDetailImpl) jobContext.getJobDetail();
+            String name = jobDetail.getName();
+            if (StringUtils.isEmpty(name)) {
+                throw new JobExecutionException("can not find service info, because desription is empty");
+            }
+            //注册job和trigger的监听器
+            JobKey jobKey = jobContext.getJobDetail().getKey();
+            TriggerKey triggerKey = jobContext.getTrigger().getKey();
+            jobContext.getScheduler().getListenerManager().addJobListener(new MyJobListener(), KeyMatcher.keyEquals(jobKey));
+            jobContext.getScheduler().getListenerManager().addTriggerListener(new MyTriggerListener(), KeyMatcher.keyEquals(triggerKey));
+
+            String[] serviceInfo = StringUtils.delimitedListToStringArray(name, ".");
+            // serviceInfo[0] is JOB_NAME_PREFIX
+            String beanName = serviceInfo[1];
+            String methodName = serviceInfo[2];
+            Object serviceImpl = getApplicationContext(jobContext).getBean(beanName);
+            Method method;
+//        try {
             Class<?>[] parameterTypes = new Class[]{String.class};
             Object[] arguments = null;
-            method = serviceImpl.getClass().getMethod(methodName,parameterTypes);
+            method = serviceImpl.getClass().getMethod(methodName, parameterTypes);
 //            logger.info("dynamic invoke {}.{}()", serviceImpl.getClass().getName(), methodName);
 //			method.invoke(serviceImpl, arguments);
             method.invoke(serviceImpl, jobContext.getJobDetail().getJobDataMap().getString("jobData"));
-        } catch (NoSuchMethodException | SecurityException
-                | IllegalAccessException | IllegalArgumentException
-                | InvocationTargetException e) {
+        } catch (Exception e) {
 //            logger.error("reflect invoke service method error", e);
         }
     }
+
     private ApplicationContext getApplicationContext(final JobExecutionContext jobexecutioncontext) {
         try {
             //applicationContext 在SchedulerFactoryBean中配置

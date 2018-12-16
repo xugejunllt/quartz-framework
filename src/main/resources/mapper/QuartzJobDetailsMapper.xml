@@ -55,6 +55,55 @@
         where t.SCHED_NAME = #{schedName}
     </select>
 
+    <select id="selectMapList" resultMap="DataResultMap">
+        select
+        <include refid="Base_Column_List" />,
+        a.TRIGGER_STATE,
+        b.TRIGGER_NAME,
+        b.TRIGGER_GROUP,
+        b.CRON_EXPRESSION,
+        b.TIME_ZONE_ID
+        from qrtz_job_details t
+        join qrtz_triggers a on t.SCHED_NAME = a.SCHED_NAME and t.JOB_NAME = a.JOB_NAME and t.JOB_GROUP = a.JOB_GROUP
+        join qrtz_cron_triggers b on a.SCHED_NAME = b.SCHED_NAME and a.TRIGGER_NAME = b.TRIGGER_NAME and a.TRIGGER_GROUP = b.TRIGGER_GROUP
+        <where>
+            <if test="schedName != null and schedName !='' ">
+                and t.SCHED_NAME =#{schedName}
+            </if>
+            <if test="jobName != null and jobName !='' ">
+                and t.JOB_NAME =#{jobName}
+            </if>
+            <if test="jobGroup != null and jobGroup !='' ">
+                and t.JOB_GROUP =#{jobGroup}
+            </if>
+            <if test="description != null and description !='' ">
+                and t.DESCRIPTION like CONCAT('%','${description}','%')
+            </if>
+            <if test="jobClassName != null and jobClassName !='' ">
+                and t.JOB_CLASS_NAME =#{jobClassName}
+            </if>
+            <if test="isDurable != null and isDurable !='' ">
+                and t.IS_DURABLE =#{isDurable}
+            </if>
+            <if test="isNonconcurrent != null and isNonconcurrent !='' ">
+                and t.IS_NONCONCURRENT =#{isNonconcurrent}
+            </if>
+            <if test="isUpdateData != null and isUpdateData !='' ">
+                and t.IS_UPDATE_DATA =#{isUpdateData}
+            </if>
+            <if test="requestsRecovery != null and requestsRecovery !='' ">
+                and t.REQUESTS_RECOVERY =#{requestsRecovery}
+            </if>
+            <if test="jobData != null and jobData !='' ">
+                and t.JOB_DATA =#{jobData}
+            </if>
+        </where>
+        <!--
+        <if test="page.sortName != null and page.sortOrder!=null">
+        order by ${page.sortName} ${page.sortOrder}
+        </if> -->
+    </select>
+
 
     <insert id="insert" parameterType="com.chikage.framework.quartzframework.model.QuartzJobDetails" >
 	    insert into qrtz_job_details (

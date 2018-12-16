@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace用于接口绑定-->
+<mapper namespace="com.chikage.framework.quartzframework.repository.JobCallerMapper">
+
+    <resultMap id="BaseResultMap" type="com.chikage.framework.quartzframework.model.JobCaller">
+        <id column="job_name" property="jobName" jdbcType="VARCHAR" />
+        <id column="job_group" property="jobGroup" jdbcType="VARCHAR" />
+        <result column="job_class" property="jobClass" jdbcType="VARCHAR" />
+        <result column="job_data" property="jobData" jdbcType="VARCHAR" />
+        <result column="job_description" property="jobDescription" jdbcType="VARCHAR" />
+        <result column="cron_expression" property="cronExpression" jdbcType="VARCHAR" />
+    </resultMap>
+
+
+    <sql id="Base_Column_List" >
+		t.job_name ,
+		t.job_group ,
+		t.job_class ,
+		t.job_data ,
+		t.job_description ,
+		t.cron_expression
+  	</sql>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from job_caller t
+        where t.job_name = #{jobName}
+    </select>
+
+
+    <insert id="insert" parameterType="com.chikage.framework.quartzframework.model.JobCaller" >
+	    insert into job_caller (
+			job_name ,
+		    job_group ,
+		    job_class ,
+		    job_data ,
+		    job_description ,
+		    cron_expression
+	    )values (
+	      	#{jobName,jdbcType=VARCHAR},
+	      	#{jobGroup,jdbcType=VARCHAR},
+	      	#{jobClass,jdbcType=VARCHAR},
+	      	#{jobData,jdbcType=VARCHAR},
+	      	#{jobDescription,jdbcType=VARCHAR},
+	      	#{cronExpression,jdbcType=VARCHAR}
+	    )
+  	</insert>
+
+
+    <insert id="insertSelective" parameterType="com.chikage.framework.quartzframework.model.JobCaller" >
+        insert into job_caller
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="jobName != null">
+                job_name,
+            </if>
+            <if test="jobGroup != null">
+                job_group,
+            </if>
+            <if test="jobClass != null">
+                job_class,
+            </if>
+            <if test="jobData != null">
+                job_data,
+            </if>
+            <if test="jobDescription != null">
+                job_description,
+            </if>
+            <if test="cronExpression != null">
+                cron_expression,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="jobName != null">
+                #{jobName,jdbcType=VARCHAR},
+            </if>
+            <if test="jobGroup != null">
+                #{jobGroup,jdbcType=VARCHAR},
+            </if>
+            <if test="jobClass != null">
+                #{jobClass,jdbcType=VARCHAR},
+            </if>
+            <if test="jobData != null">
+                #{jobData,jdbcType=VARCHAR},
+            </if>
+            <if test="jobDescription != null">
+                #{jobDescription,jdbcType=VARCHAR},
+            </if>
+            <if test="cronExpression != null">
+                #{cronExpression,jdbcType=VARCHAR},
+            </if>
+
+        </trim>
+    </insert>
+
+    <delete id="deleteByPrimaryKey">
+	    delete from job_caller where job_name= #{jobName}
+	</delete>
+
+</mapper>

@@ -1,12 +1,16 @@
 package com.chikage.framework.quartzframework.controller;
 
+import com.chikage.framework.quartzframework.common.BaseResponse;
+import com.chikage.framework.quartzframework.manager.JobDetailManager;
+import com.chikage.framework.quartzframework.model.JobCaller;
 import com.chikage.framework.quartzframework.model.QuartzJobDetails;
+import com.chikage.framework.quartzframework.manager.QuartzManager;
 import com.chikage.framework.quartzframework.service.QuartzService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.HashMap;
-import java.util.Map;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * All rights Reserved, Designed By www.freemud.cn
@@ -25,22 +29,28 @@ import java.util.Map;
 public class QuartzController {
     @Autowired
     private QuartzService quartzService;
+    @Autowired
+    private QuartzManager quartzManager;
+    @Autowired
+    private JobDetailManager jobDetailManager;
 
     @PostMapping(value = "/add")
-    public Map<String, Object> addQuartzJobDetails(@RequestBody QuartzJobDetails quartzJobDetails) throws Exception {
-        Map<String, Object> map = new HashMap<>();
-        quartzService.createQrtzJobDetails(quartzJobDetails);
-        map.put("success", true);
-        map.put("msg", "定时任务添加成功");
-        return map;
+    public BaseResponse addQuartzJobDetails(@RequestBody QuartzJobDetails quartzJobDetails) throws Exception {
+        return quartzManager.createQrtzJobDetails(quartzJobDetails);
+    }
+
+    @PostMapping(value = "/addJob")
+    public BaseResponse addJob(@RequestBody JobCaller jobCaller) throws Exception{
+        return quartzService.addJob(jobCaller);
     }
 
     @PostMapping(value = "/delete")
-    public Map<String,Object> deleteQuartzJobDetails(@RequestBody QuartzJobDetails quartzJobDetails) throws Exception{
-        Map<String, Object> map = new HashMap<>();
-        quartzService.deleteQuartzJobDetails(quartzJobDetails);
-        map.put("success", true);
-        map.put("msg", "定时任务删除成功");
-        return map;
+    public BaseResponse deleteQuartzJobDetails(@RequestBody QuartzJobDetails quartzJobDetails) throws Exception{
+        return quartzManager.deleteQuartzJobDetails(quartzJobDetails);
+    }
+
+    @PostMapping(value = "/deleteJob")
+    public BaseResponse deleteJob(@RequestBody JobCaller jobCaller) throws Exception{
+        return quartzService.deleteJob(jobCaller);
     }
 }

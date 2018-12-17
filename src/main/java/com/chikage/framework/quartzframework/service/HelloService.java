@@ -18,6 +18,10 @@ import org.springframework.stereotype.Component;
 public class HelloService {
 
     public void sayHello(String a) {
-        System.out.println(a+"======hello world, i am quartz" + System.currentTimeMillis());
+        System.out.println(a+"======hello world, i am quartz");
+    }
+
+    public void callHello(String b) {
+        System.out.println(b+"======call");
     }
 }

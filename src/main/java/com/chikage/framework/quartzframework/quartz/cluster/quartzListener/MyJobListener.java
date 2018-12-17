@@ -1,8 +1,13 @@
 package com.chikage.framework.quartzframework.quartz.cluster.quartzListener;
 
+import com.chikage.framework.quartzframework.model.JobScheduleLog;
+import com.chikage.framework.quartzframework.repository.JobScheduleLogMapper;
+import com.chikage.framework.quartzframework.utils.SpringContextHolder;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.quartz.JobListener;
+
+import java.util.Optional;
 
 /**
  * All rights Reserved, Designed By www.freemud.cn
@@ -17,7 +22,10 @@ import org.quartz.JobListener;
  * 注意：本内容仅限于上海非码科技内部传阅，禁止外泄以及用于其他的商业目的
  */
 public class MyJobListener implements JobListener {
-    public static final String LISTENER_NAME = "QuartzSchedulerListener";
+    public static final String LISTENER_NAME = "MyJobListener";
+
+//    @Autowired
+//    private JobScheduleLogMapper logMapper;
 
     @Override
     public String getName() {
@@ -38,7 +46,7 @@ public class MyJobListener implements JobListener {
     @Override
     public void jobExecutionVetoed(JobExecutionContext context) {
         System.out.println("Job调度被拒:jobExecutionVetoed");
-        //可以做一些日志记录原因
+        //todo:原因捕获
 
     }
 
@@ -55,6 +63,10 @@ public class MyJobListener implements JobListener {
             System.out.println("Exception thrown by: " + jobName
                     + " Exception: " + jobException.getMessage());
         }
-
+        JobScheduleLog log = new JobScheduleLog();
+        log.setJobRuntime(String.valueOf(context.getJobRunTime()));
+        log.setId(Optional.ofNullable(context.get("id")).map(p->Integer.parseInt(String.valueOf(context.get("id")))).orElse(null));
+        JobScheduleLogMapper logMapper = SpringContextHolder.getBean(JobScheduleLogMapper.class);
+        logMapper.updateByPrimaryKeySelective(log);
     }
 }

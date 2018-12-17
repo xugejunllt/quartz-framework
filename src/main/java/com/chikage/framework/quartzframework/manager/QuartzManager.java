@@ -126,7 +126,7 @@ public class QuartzManager {
     }
 
     /**
-     * <li>校验服务和方法是否存在</li>
+     * 校验服务和方法是否存在
      *
      * @param jobName
      * @throws DynamicQuartzException

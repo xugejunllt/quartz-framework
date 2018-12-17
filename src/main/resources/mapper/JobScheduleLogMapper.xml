@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace用于接口绑定-->
+<mapper namespace="com.chikage.framework.quartzframework.repository.JobScheduleLogMapper">
+
+    <resultMap id="BaseResultMap" type="com.chikage.framework.quartzframework.model.JobScheduleLog">
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="job_name" property="jobName" jdbcType="VARCHAR" />
+        <result column="job_instanceId" property="jobInstanceId" jdbcType="VARCHAR" />
+        <result column="job_firetime" property="jobFiretime" jdbcType="DATE" />
+        <result column="job_endtime" property="jobEndtime" jdbcType="DATE" />
+        <result column="job_runtime" property="jobRuntime" jdbcType="VARCHAR" />
+    </resultMap>
+
+
+    <sql id="Base_Column_List" >
+		t.id ,
+		t.job_name ,
+		t.job_instanceId ,
+		t.job_firetime ,
+		t.job_endtime ,
+		t.job_runtime
+  	</sql>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from job_schedule_log t
+        where t.id = #{id}
+    </select>
+
+
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true" parameterType="com.chikage.framework.quartzframework.model.JobScheduleLog" >
+	    insert into job_schedule_log (
+			id ,
+		    job_name ,
+		    job_instanceId ,
+		    job_firetime ,
+		    job_endtime ,
+		    job_runtime
+	    )values (
+	    	#{id,jdbcType=INTEGER},
+	      	#{jobName,jdbcType=VARCHAR},
+	      	#{jobInstanceId,jdbcType=VARCHAR},
+	      	#{jobFiretime,jdbcType=DATE},
+	      	#{jobEndtime,jdbcType=DATE},
+	      	#{jobRuntime,jdbcType=VARCHAR}
+	    )
+  	</insert>
+
+
+    <insert id="insertSelective" parameterType="com.chikage.framework.quartzframework.model.JobScheduleLog" >
+        insert into job_schedule_log
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="id != null">
+                id,
+            </if>
+            <if test="jobName != null">
+                job_name,
+            </if>
+            <if test="jobInstanceId != null">
+                job_instanceId,
+            </if>
+            <if test="jobFiretime != null">
+                job_firetime,
+            </if>
+            <if test="jobEndtime != null">
+                job_endtime,
+            </if>
+            <if test="jobRuntime != null">
+                job_runtime,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="id != null">
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="jobName != null">
+                #{jobName,jdbcType=VARCHAR},
+            </if>
+            <if test="jobInstanceId != null">
+                #{jobInstanceId,jdbcType=VARCHAR},
+            </if>
+            <if test="jobFiretime != null">
+                #{jobFiretime,jdbcType=DATE},
+            </if>
+            <if test="jobEndtime != null">
+                #{jobEndtime,jdbcType=DATE},
+            </if>
+            <if test="jobRuntime != null">
+                #{jobRuntime,jdbcType=VARCHAR},
+            </if>
+
+        </trim>
+    </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="com.chikage.framework.quartzframework.model.JobScheduleLog">
+        update job_schedule_log
+        <set>
+            <if test="jobName != null">
+                job_name=#{jobName},
+            </if>
+            <if test="jobInstanceId != null">
+                job_instanceId=#{jobInstanceId},
+            </if>
+            <if test="jobFiretime != null">
+                job_firetime=#{jobFiretime},
+            </if>
+            <if test="jobEndtime != null">
+                job_endtime=#{jobEndtime},
+            </if>
+            <if test="jobRuntime != null">
+                job_runtime=#{jobRuntime},
+            </if>
+        </set>
+        where id=#{id}
+    </update>
+
+
+    <delete id="deleteByPrimaryKey">
+	    delete from job_schedule_log where id= #{id}
+	</delete>
+
+</mapper>

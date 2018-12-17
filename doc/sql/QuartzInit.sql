@@ -10,6 +10,7 @@ DROP TABLE IF EXISTS QRTZ_TRIGGERS;
 DROP TABLE IF EXISTS QRTZ_JOB_DETAILS;
 DROP TABLE IF EXISTS QRTZ_CALENDARS;
 DROP TABLE IF EXISTS job_caller;
+DROP TABLE IF EXISTS job_schedule_log;
 
 
 CREATE TABLE job_caller
@@ -21,6 +22,17 @@ job_data VARCHAR(200) NOT NULL,
 job_description VARCHAR(250) NULL,
 cron_expression VARCHAR(200) NOT NULL,
 PRIMARY KEY (job_name,job_group)
+);
+
+CREATE TABLE job_schedule_log
+(
+id INTEGER(11),
+job_name VARCHAR(200),
+job_instanceId VARCHAR(200),
+job_firetime DATETIME(3),
+job_endtime DATETIME(3),
+job_runtime VARCHAR(200),
+PRIMARY KEY (id)
 );
 
 CREATE TABLE QRTZ_JOB_DETAILS

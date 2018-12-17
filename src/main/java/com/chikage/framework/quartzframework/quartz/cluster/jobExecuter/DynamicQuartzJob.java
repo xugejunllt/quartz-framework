@@ -1,10 +1,15 @@
 package com.chikage.framework.quartzframework.quartz.cluster.jobExecuter;
 
+import com.chikage.framework.quartzframework.log.ErrorLog;
+import com.chikage.framework.quartzframework.log.LogTreadLocal;
+import com.chikage.framework.quartzframework.manager.JobScheduleLogManager;
 import com.chikage.framework.quartzframework.quartz.cluster.quartzListener.MyJobListener;
 import com.chikage.framework.quartzframework.quartz.cluster.quartzListener.MyTriggerListener;
+import com.chikage.framework.quartzframework.utils.ApplicationContextWare;
 import org.quartz.*;
 import org.quartz.impl.JobDetailImpl;
 import org.quartz.impl.matchers.KeyMatcher;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 import org.springframework.util.StringUtils;
@@ -26,10 +31,14 @@ import java.lang.reflect.Method;
 @DisallowConcurrentExecution
 @PersistJobDataAfterExecution
 public class DynamicQuartzJob extends QuartzJobBean {
+    @Autowired
+    private JobScheduleLogManager jobManager;
+
     @Override
     protected void executeInternal(JobExecutionContext jobContext) {
         try {
-
+            int i = jobManager.trans2JobLogBefore(jobContext);
+            if (i <= 0) return;
             JobDetailImpl jobDetail = (JobDetailImpl) jobContext.getJobDetail();
             String name = jobDetail.getName();
             if (StringUtils.isEmpty(name)) {
@@ -54,8 +63,11 @@ public class DynamicQuartzJob extends QuartzJobBean {
 //            logger.info("dynamic invoke {}.{}()", serviceImpl.getClass().getName(), methodName);
 //			method.invoke(serviceImpl, arguments);
             method.invoke(serviceImpl, jobContext.getJobDetail().getJobDataMap().getString("jobData"));
-        } catch (Exception e) {
-//            logger.error("reflect invoke service method error", e);
+            jobManager.trans2JobLogAfter(jobContext, i);
+        } catch (Exception ex) {
+            ErrorLog.errorConvertJson(ApplicationContextWare.getAppName(), LogTreadLocal.getTrackingNo(), this.getClass(), "quartz定时任务execute异常", ex);
+
+//            logger.error("reflect  invoke service method error", e);
         }
     }
 

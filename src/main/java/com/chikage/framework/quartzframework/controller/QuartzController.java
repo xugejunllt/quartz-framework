@@ -39,6 +39,7 @@ public class QuartzController {
         return quartzManager.createQrtzJobDetails(quartzJobDetails);
     }
 
+    //新增定时任务,记录job_caller参数
     @PostMapping(value = "/addJob")
     public BaseResponse addJob(@RequestBody JobCaller jobCaller) throws Exception{
         return quartzService.addJob(jobCaller);
@@ -49,6 +50,7 @@ public class QuartzController {
         return quartzManager.deleteQuartzJobDetails(quartzJobDetails);
     }
 
+    //删除定时任务,记录job_caller参数
     @PostMapping(value = "/deleteJob")
     public BaseResponse deleteJob(@RequestBody JobCaller jobCaller) throws Exception{
         return quartzService.deleteJob(jobCaller);

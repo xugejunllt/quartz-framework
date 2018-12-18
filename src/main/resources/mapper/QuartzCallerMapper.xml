@@ -26,7 +26,7 @@
         select
         <include refid="Base_Column_List" />
         from job_caller t
-        where t.job_name = #{jobName}
+        where t.job_name = #{jobName} and t.cron_expression = #{cronExpression}
     </select>
 
 
@@ -95,7 +95,7 @@
     </insert>
 
     <delete id="deleteByPrimaryKey">
-	    delete from job_caller where job_name= #{jobName}
+	    delete from job_caller where job_name= #{jobName} and cron_expression = #{cronExpression}
 	</delete>
 
 </mapper>

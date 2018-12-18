@@ -18,10 +18,11 @@ import org.apache.ibatis.annotations.Param;
  */
 @Mapper
 public interface JobCallerMapper {
+    JobCaller selectByPrimaryKey(@Param("jobName") String jobName, @Param("cronExpression") String cronExpression);
     //增加记录
     int insert(JobCaller jobCaller);
     //删除记录
-    int deleteByPrimaryKey(@Param("jobName") String id);
+    int deleteByPrimaryKey(@Param("jobName") String jobName,@Param("cronExpression")String cronExpression);
 
     //删除记录
     int delete(JobCaller jobCaller);

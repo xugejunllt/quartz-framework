@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
+
 /**
  * All rights Reserved, Designed By www.freemud.cn
  *
@@ -41,7 +43,7 @@ public class QuartzController {
 
     //新增定时任务,记录job_caller参数
     @PostMapping(value = "/addJob")
-    public BaseResponse addJob(@RequestBody JobCaller jobCaller) throws Exception{
+    public BaseResponse addJob(@Valid@RequestBody JobCaller jobCaller) throws Exception{
         return quartzService.addJob(jobCaller);
     }
 
@@ -52,7 +54,7 @@ public class QuartzController {
 
     //删除定时任务,记录job_caller参数
     @PostMapping(value = "/deleteJob")
-    public BaseResponse deleteJob(@RequestBody JobCaller jobCaller) throws Exception{
+    public BaseResponse deleteJob(@Valid @RequestBody JobCaller jobCaller) throws Exception{
         return quartzService.deleteJob(jobCaller);
     }
 }

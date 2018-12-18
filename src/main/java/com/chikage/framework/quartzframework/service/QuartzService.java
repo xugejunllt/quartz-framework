@@ -37,7 +37,8 @@ public class QuartzService {
     @Transactional
     public BaseResponse addJob(JobCaller jobCaller) {
         try {
-            String jobGroup = jobCaller.getJobGroup() != null ? jobCaller.getJobGroup() : "DEFAULT";
+//            String jobGroup = jobCaller.getJobGroup() != null ? jobCaller.getJobGroup() : "DEFAULT";
+            String jobGroup = jobCaller.getJobGroup() != null ? jobCaller.getJobGroup() : String.valueOf(System.currentTimeMillis());
             jobCaller.setJobGroup(jobGroup);
             jobCallerMapper.insert(jobCaller);
             QuartzJobDetails jobDetails = jobDetailManager.trans2QuartzJobDetail(jobCaller);
@@ -52,7 +53,9 @@ public class QuartzService {
     @Transactional
     public BaseResponse deleteJob(JobCaller jobCaller) {
         try {
-            jobCallerMapper.deleteByPrimaryKey(jobCaller.getJobName());
+            JobCaller jobCallerSelect = jobCallerMapper.selectByPrimaryKey(jobCaller.getJobName(), jobCaller.getCronExpression());
+            jobCallerMapper.deleteByPrimaryKey(jobCaller.getJobName(),jobCaller.getCronExpression());
+            jobCaller.setJobGroup(jobCallerSelect.getJobGroup());
             QuartzJobDetails jobDetails = jobDetailManager.trans2QuartzJobDetail(jobCaller);
             return quartzManager.deleteQuartzJobDetails(jobDetails);
         } catch (Exception ex) {

@@ -15,8 +15,6 @@ import org.springframework.stereotype.Component;
  * @author: chikage(chikagelin @ 163.com)
  * @date: 2018/12/16 6:10 PM
  * @version: v1.0
- * @copyright: 2018 www.freemud.cn Inc. All rights reserved.
- * 注意：本内容仅限于上海非码科技内部传阅，禁止外泄以及用于其他的商业目的
  */
 @Component
 public class JobDetailManager {

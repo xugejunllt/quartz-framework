@@ -15,8 +15,6 @@ import java.util.Calendar;
  * @Description: ${TODO}(用一句话描述该文件做什么)
  * @author: aiqi.gong
  * @date: 2017/6/21 14:33
- * @Copyright: 2017 www.freemud.cn Inc. All rights reserved.
- * 注意：本内容仅限于上海非码科技内部传阅，禁止外泄以及用于其他的商业目
  */
 public class ThirdPartyLog {
     private static Logger logger = LoggerFactory.getLogger(ThirdPartyLog.class);

@@ -20,8 +20,6 @@ import java.util.Calendar;
  * @Description: 异常日志打印
  * @author: aiqi.gong
  * @date: 2017/6/21 10:43
- * @Copyright: 2017 www.freemud.cn Inc. All rights reserved.
- * 注意：本内容仅限于上海非码科技内部传阅，禁止外泄以及用于其他的商业目
  */
 public class ErrorLog {
     private static Logger logger = LoggerFactory.getLogger(ErrorLog.class);

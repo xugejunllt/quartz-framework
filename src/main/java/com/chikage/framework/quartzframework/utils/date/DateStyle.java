@@ -9,8 +9,6 @@ package com.chikage.framework.quartzframework.utils.date;
  * @author: chikage(chikagelin @ 163.com)
  * @date: 2018/10/10 下午5:38
  * @version: v1.0
- * @copyright: 2018 www.freemud.cn Inc. All rights reserved.
- * 注意：本内容仅限于上海非码科技内部传阅，禁止外泄以及用于其他的商业目的
  */
 public enum DateStyle {
     MM_DD("MM-dd"),

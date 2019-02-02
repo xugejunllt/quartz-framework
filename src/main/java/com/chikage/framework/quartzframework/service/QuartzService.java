@@ -22,8 +22,6 @@ import org.springframework.transaction.annotation.Transactional;
  * @author: chikage(chikagelin @ 163.com)
  * @date: 2018/12/16 8:53 PM
  * @version: v1.0
- * @copyright: 2018 www.freemud.cn Inc. All rights reserved.
- * 注意：本内容仅限于上海非码科技内部传阅，禁止外泄以及用于其他的商业目的
  */
 @Component
 public class QuartzService {
@@ -37,8 +35,8 @@ public class QuartzService {
     @Transactional
     public BaseResponse addJob(JobCaller jobCaller) {
         try {
-//            String jobGroup = jobCaller.getJobGroup() != null ? jobCaller.getJobGroup() : "DEFAULT";
-            String jobGroup = jobCaller.getJobGroup() != null ? jobCaller.getJobGroup() : String.valueOf(System.currentTimeMillis());
+            String jobGroup = jobCaller.getJobGroup() != null ? jobCaller.getJobGroup() : "DEFAULT";
+//            String jobGroup = jobCaller.getJobGroup() != null ? jobCaller.getJobGroup() : String.valueOf(System.currentTimeMillis());
             jobCaller.setJobGroup(jobGroup);
             jobCallerMapper.insert(jobCaller);
             QuartzJobDetails jobDetails = jobDetailManager.trans2QuartzJobDetail(jobCaller);
